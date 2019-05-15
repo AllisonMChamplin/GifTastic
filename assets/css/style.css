@@ -1,0 +1,26 @@
+body {
+    Font-Family: 'Open Sans', Sans-Serif;
+    Font-Size: 15px;
+}
+
+div {
+    border: 1px solid #ccc;
+}
+
+h1, h2, h3, h4, h5 {
+    Font-Family: 'Raleway', Sans-Serif;
+}
+
+h1 {
+    Font-Size: 44px;
+}
+
+.tag {    
+    display: inline-block;
+    margin: 5px;
+    padding: 5px 10px;
+}
+
+
+
+
