@@ -50,13 +50,23 @@ $(document).ready(function () {
                     // Creating and storing a div tag
                     var topicDiv = $("<div>");
 
+                    // Creating a paragraph tag with the result item's rating
+                    var p = $("<p>").text("Rating: " + results[i].rating);
+
                     // Creating and storing an image tag
                     var topicImage = $("<img>");
-                    // Setting the src attribute of the image to a property pulled off the result item
-                    topicImage.attr("src", results[i].images.fixed_height.url);
-
+                    // Setting the src attribute of the image to the fixed height still property
+                    topicImage.attr("src", results[i].images.fixed_height_still.url);
+                    
+                    topicImage.attr("data-state", "still");
+                    topicImage.attr("data-still", results[i].images.fixed_height_still.url);
+                    topicImage.attr("data-animate", results[i].images.fixed_height.url);
+                    // Setting the 
+                    // Adding a class to the image
+                    topicImage.attr("class", "clicky");
                     // Appending the paragraph and image tag to the topicDiv
-                    // topicDiv.append(p);
+                    topicDiv.attr("class", "topic-image");
+                    topicDiv.append(p);
                     topicDiv.append(topicImage);
 
                     // Prependng the topicDiv to the HTML page in the "#gifs-appear-here" div
@@ -65,4 +75,27 @@ $(document).ready(function () {
 
             });
     });
+
+    // Click handler to toggle between still image and animated GIFs
+    $('body').on('click', 'img', function () {
+        console.log('it works');
+
+        // The attr jQuery method allows us to get or set the value of any attribute on our HTML element
+        var state = $(this).attr("data-state");
+        // If the clicked image's state is still, update its src attribute to what its data-animate value is.
+        // Then, set the image's data-state to animate
+        // Else set src to the data-still value
+        if (state === "still") {
+            $(this).attr("src", $(this).attr("data-animate"));
+            $(this).attr("data-state", "animate");
+        } else {
+            $(this).attr("src", $(this).attr("data-still"));
+            $(this).attr("data-state", "still");
+        }
+    })
+
+
+
 });
+// $('#gifs-appear-here').text(JSON.stringify(response));
+// $('#gifs-appear-here').append(JSON.stringify("<br><br>Box Office: " + response.data));
