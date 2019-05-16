@@ -4,7 +4,7 @@ body {
 }
 
 div {
-    border: 1px solid #ccc;
+    /* border: 1px solid #ccc; */
 }
 
 h1, h2, h3, h4, h5 {
@@ -18,9 +18,36 @@ h1 {
 .tag {    
     display: inline-block;
     margin: 5px;
-    padding: 5px 10px;
+    padding: 8px 16px;
+    border: 1px solid white;
+    border-radius: 5px;
+    color:#fff;
+    font-weight: bolder;
 }
 
+.topicDiv {
+    display: inline-block;
+    float: left;
+    margin-right: 40px;
+    border: 1px solid red;
+}
 
+#run-search {
+    border: 1px solid white;
+    border-radius: 5px;
+    color:#fff;
+    font-weight: bolder;
+}
 
+.btn-grad {background-image: linear-gradient(to right, #642B73 0%, #C6426E 51%, #642B73 100%)}
+.btn-grad:hover { background-position: right center; }
 
+.page-header {
+    background:#3f3d64;
+    color: #fff;
+
+}
+
+h1 {
+    padding: 20px 0;
+}

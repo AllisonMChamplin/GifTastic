@@ -3,11 +3,12 @@
 $(document).ready(function () {
 
     var topics = ["Rainbows", "Fairies", "Unicorns", "Sparkles", "Princesses", "Pink kittens"];
-
     var colors = ["c8bddd", "a68fc3", "a94698", "7754a4", "652d92", "8b2475", "c41a7b", "ef1468", "e46075", "ed6967", "c82262"];
 
     var topicList = function () {
-        console.log("hi");
+        console.log("hi topicList");
+        $('#tags').empty();
+        console.log("Clearing tags div");
         for (var i = 0; i < topics.length; i++) {
             var tagDiv = $("<button>");
             var randomColor = colors[Math.floor(Math.random() * colors.length)];
@@ -17,64 +18,68 @@ $(document).ready(function () {
             tagDiv.css("background-color", "#" + randomColor);
             $('#tags').append(tagDiv);
         }
-    }
 
+        $(".tag").on("click", function () {
+            // Grabbing and storing the data-topic property value from the button
+            var topic = $(this).attr("data-topic");
+            console.log("topic ", topic);
+
+            // Constructing a queryURL using the animal name
+            var APIKEY = "DPBvGpuy5v0lsWlSAd51dsjMvJ6rjWcP";
+            var queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
+                topic + "&api_key=" + APIKEY + "&limit=10";
+            console.log("queryURL: ", queryURL);
+            // Performing an AJAX request with the queryURL
+            $.ajax({
+                url: queryURL,
+                method: "GET"
+            })
+                // After data comes back from the request
+                .then(function (response) {
+                    console.log(queryURL);
+                    console.log(response);
+
+                    // storing the data from the AJAX request in the results variable
+                    var results = response.data;
+
+                    // Looping through each result item
+                    for (var i = 0; i < results.length; i++) {
+
+                        // Creating and storing a div tag
+                        var topicDiv = $("<div>");
+
+                        // Creating a paragraph tag with the result item's rating
+                        var p = $("<p>").text("Rating: " + results[i].rating);
+
+                        // Creating and storing an image tag
+                        var topicImage = $("<img>");
+                        // Setting the src attribute of the image to the fixed height still property
+                        topicImage.attr("src", results[i].images.fixed_height_still.url);
+
+                        topicImage.attr("data-state", "still");
+                        topicImage.attr("data-still", results[i].images.fixed_height_still.url);
+                        topicImage.attr("data-animate", results[i].images.fixed_height.url);
+                        // Setting the 
+                        // Adding a class to the image
+                        topicImage.attr("class", "clicky");
+                        // Appending the paragraph and image tag to the topicDiv
+                        topicDiv.attr("class", "topic-image");
+                        topicDiv.append(p);
+                        topicDiv.append(topicImage);
+
+                        // Prependng the topicDiv to the HTML page in the "#gifs-appear-here" div
+                        $("#gifs-appear-here").prepend(topicDiv);
+                    }
+
+                });
+        });
+
+
+    }
 
     topicList();
 
-    $("button").on("click", function () {
-        // Grabbing and storing the data-topic property value from the button
-        var topic = $(this).attr("data-topic");
 
-        // Constructing a queryURL using the animal name
-        var APIKEY = "DPBvGpuy5v0lsWlSAd51dsjMvJ6rjWcP";
-        var queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
-            topic + "&api_key=" + APIKEY + "&limit=10";
-        console.log("queryURL: ", queryURL);
-        // Performing an AJAX request with the queryURL
-        $.ajax({
-            url: queryURL,
-            method: "GET"
-        })
-            // After data comes back from the request
-            .then(function (response) {
-                console.log(queryURL);
-                console.log(response);
-
-                // storing the data from the AJAX request in the results variable
-                var results = response.data;
-
-                // Looping through each result item
-                for (var i = 0; i < results.length; i++) {
-
-                    // Creating and storing a div tag
-                    var topicDiv = $("<div>");
-
-                    // Creating a paragraph tag with the result item's rating
-                    var p = $("<p>").text("Rating: " + results[i].rating);
-
-                    // Creating and storing an image tag
-                    var topicImage = $("<img>");
-                    // Setting the src attribute of the image to the fixed height still property
-                    topicImage.attr("src", results[i].images.fixed_height_still.url);
-                    
-                    topicImage.attr("data-state", "still");
-                    topicImage.attr("data-still", results[i].images.fixed_height_still.url);
-                    topicImage.attr("data-animate", results[i].images.fixed_height.url);
-                    // Setting the 
-                    // Adding a class to the image
-                    topicImage.attr("class", "clicky");
-                    // Appending the paragraph and image tag to the topicDiv
-                    topicDiv.attr("class", "topic-image");
-                    topicDiv.append(p);
-                    topicDiv.append(topicImage);
-
-                    // Prependng the topicDiv to the HTML page in the "#gifs-appear-here" div
-                    $("#gifs-appear-here").prepend(topicDiv);
-                }
-
-            });
-    });
 
     // Click handler to toggle between still image and animated GIFs
     $('body').on('click', 'img', function () {
@@ -94,8 +99,51 @@ $(document).ready(function () {
         }
     })
 
+    var updatePage = function () {
+        console.log("hi updatePage");
+
+    }
 
 
+    // Click Handler for the Search Button
+    $("#run-search").on("click", function (event) {
+        // Prevents the page from reloading on form submit.
+        event.preventDefault();
+
+        console.log("Hi run search click handler");
+
+        // Grab text the user typed into the search input
+        var input = $("#search-term").val().trim();
+        console.log("input *****", input);
+
+        if (input) {
+        topics.push(input);
+        console.log("topics array: ", topics);
+        topicList();
+        };
+
+
+        //     // Constructing a queryURL using the animal name
+        //     var APIKEY = "DPBvGpuy5v0lsWlSAd51dsjMvJ6rjWcP";
+        //     var queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
+        //         input + "&api_key=" + APIKEY + "&limit=10";
+
+
+        //     // Make the AJAX request to the API - GETs the JSON data at the queryURL.
+        //     // The data then gets passed as an argument to the updatePage function
+        //     $.ajax({
+        //         url: queryURL,
+        //         method: "GET"
+        //     }).then(function (response) {
+
+        //         console.log(queryURL);
+        //         console.log(response);
+
+        //         // storing the data from the AJAX request in the results variable
+        //         var results = response.data;
+
+    });
 });
-// $('#gifs-appear-here').text(JSON.stringify(response));
-// $('#gifs-appear-here').append(JSON.stringify("<br><br>Box Office: " + response.data));
+
+
+
