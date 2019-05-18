@@ -2,6 +2,8 @@ $(document).ready(function () {
 
     var topicsArray = ["Rainbows", "Fairies", "Unicorns", "Sparkles", "Princesses", "Pink kittens", "Ponies", "Twilight sparkle", "Pinkie Pie", "Rainbow Dash", "Fluttershy"];
     var colors = ["c8bddd", "a68fc3", "a94698", "7754a4", "652d92", "8b2475", "c41a7b", "ef1468", "e46075", "ed6967", "c82262"];
+    var currentTopic = "";
+    var currentTopicTen = 1;
 
     // This function creates a button for each item in topicsArray and appends them to #tags
     var topicList = function () {
@@ -34,10 +36,19 @@ $(document).ready(function () {
     // Ajax call to GiphyAPI using parameter from #tags listener
     var gifRequest = function (topic) {
         console.log("---- hi gifRequest ----");
+        var x = 10;
+        console.log("currentTopicTen: ", currentTopicTen);
+        // Has user already received a set of 10 results?
+        if (currentTopicTen === 0) {
+            x = 10;
+        } else {
+            x = currentTopicTen * 10;
+        };
+
         // Constructing a queryURL using the topic name
         var APIKEY = "DPBvGpuy5v0lsWlSAd51dsjMvJ6rjWcP";
         var queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
-            topic + "&api_key=" + APIKEY + "&limit=10";
+            topic + "&api_key=" + APIKEY + "&limit=10" + "&offset=" + x;
         // Performing an AJAX request with the queryURL
         $.ajax({
             url: queryURL,
@@ -51,6 +62,7 @@ $(document).ready(function () {
                 // storing the data from the AJAX request in the results variable
                 var results = response.data;
                 displayGifs(results);
+                currentTopicTen++;
             });
     };
 
@@ -63,8 +75,10 @@ $(document).ready(function () {
             // Creating and storing a div tag
             var topicDiv = $("<div>");
             // Creating a paragraph tag with the result item's rating
-            var p = $("<p>").text("Rating: " + resultsList[i].rating.toUpperCase());
-            p.attr("class", "meta");
+            var rating = $("<p>").text("Rating: " + resultsList[i].rating.toUpperCase());
+            rating.attr("class", "meta");
+            var title = $("<p>").text("title: " + resultsList[i].title);
+            title.attr("class", "meta");
             // Creating and storing an image tag
             var topicImage = $("<img>");
             // Setting the src attribute of the image to the fixed height still property
@@ -78,19 +92,46 @@ $(document).ready(function () {
             // Appending the paragraph and image tag to the topicDiv
             topicDiv.attr("class", "topic-image");
             topicDiv.append(topicImage);
-            topicDiv.append(p);
+            topicDiv.append(rating);
+            topicDiv.append(title);
             // Prependng the topicDiv to the HTML page in the "#gifs-appear-here" div
             $("#gifs-appear-here").prepend(topicDiv);
         }
     };
-    
-    // Click listener for buttons inside #tags div
+
+    // Function for button to add 10 Gifs to the current topic
+    var showAddTenButton = function () {
+        console.log("---- hi addTenGifs ----");
+        var controlsDiv = $("#controls");
+        controlsDiv.empty();
+        var addTenButton = $("<button>");
+        addTenButton.attr("class", "form-control");
+        addTenButton.attr("id", "add");
+        addTenButton.text("Add 10 new " + currentTopic + " Gifs!")
+        controlsDiv.append(addTenButton);
+    };
+
+    // Show current topic div
+    var showTopic = function () {
+        console.log("---- hi showTopic ----")
+        var showDiv = $('#show');
+        showDiv.html(currentTopic);
+    };
+
+    // Click handler for add 10 button
+    $("#controls").on("click", "button", function () {
+        console.log("---- hi #controls listener ----");
+        gifRequest(currentTopic);
+    });
+
+    // Click handler for buttons inside #tags div
     $("#tags").on("click", "button", function () {
         console.log("---- hi #tags listener ----");
         // Storing the data-topic property value from the button
-        var topic = $(this).attr("data-topic");
-        console.log("topic ", topic);
-        gifRequest(topic);
+        currentTopic = $(this).attr("data-topic");
+        showTopic(currentTopic);
+        showAddTenButton();
+        gifRequest(currentTopic);
     });
 
     // Click handler to toggle between still image and animated GIFs
@@ -108,7 +149,7 @@ $(document).ready(function () {
         }
     });
 
-    // Click Handler for the Search Button
+    // Click handler for the Search Button
     $("#run-search").on("click", function (event) {
         console.log("---- hi run search listener ----");
         // Prevents the page from reloading on form submit.
