@@ -4,6 +4,11 @@ $(document).ready(function () {
     var colors = ["656565", "646b73", "928f8a"];
     var currentTopic = "";
     var currentTopicTen = 1;
+    var topicSpacer = "";
+    var tempTopic = "";
+    var tempTopicSpacer = "";
+    var tempDiv = "";
+    var wrapDiv = "";
 
     // This function creates a button for each item in topicsArray and appends them to #tags
     var topicList = function () {
@@ -28,19 +33,90 @@ $(document).ready(function () {
 
     // Rando colors (called by topicList)
     var randomColor = function () {
-        console.log("---- hi randomColor ----");
+        // console.log("---- hi randomColor ----");
         var c = colors[Math.floor(Math.random() * colors.length)];
         return c;
     };
 
-    //////////////////////////////////////////////
-    // Ajax call to OMDBAPI using parameter from #tags listener
-    var actorRequest = function (topic) {
-        console.log("---- hi actorRequest ----");
-        // Constructing a queryURL using the topic name
+
+
+
+    // Click handler for the Search Button
+    $("#run-search").on("click", function (event) {
+        console.log("---- hi search event ----");
+        // Prevents the page from reloading on form submit.
+        event.preventDefault();
+        $('#warn').empty();
+        // Grab text the user typed into the search input
+        tempTopic = $("#search-term").val().trim();
+        // If the tempTopic is not empty, call matcherAjax to see if it's in the OMDBAPI database.
+        if (tempTopic) {
+            tempTopicSpacer = encodeURIComponent(tempTopic);
+            if (matcherAjax(tempTopicSpacer) == true) {
+                topicsArray.push(tempTopic);
+                topicList();
+                $('#searchbox').find('input:text').val('');
+                currentTopic == tempTopic;
+            } else {
+                return false;
+            };
+        } else {
+            console.log("blank input search entered");
+        };
+    });
+
+    // matcherAjax checks if the user's topic has a match in OMDB API
+    var matcherAjax = function (x) {
         var APIKEY = "c7c89c17";
         var queryURL = "http://www.omdbapi.com/?s=" +
-            topic + "&apikey=" + APIKEY + "&limit=1";
+            x + "&apikey=" + APIKEY + "&limit=1";
+        console.log("queryURL: ", queryURL);
+        $.ajax({
+            url: queryURL,
+            method: "GET"
+        })
+            .then(function (response) {
+                console.log("response", response);
+                console.log(response.Response);
+                if (response.Response == "False") {
+                    console.log("Matcher: its false");
+                    $('#warn').html(response.Error + ' Try again!');
+                    return false;
+                } else {
+                    console.log("Matcher: its true");
+                    var q = decodeURIComponent(topicSpacer);
+                    console.log("q: ", q);
+                    return q;
+                }
+            });
+    };
+
+
+    // Click handler for buttons inside #tags div
+    $("#tags").on("click", "button", function () {
+        console.log("***** CLICK! hi #tags listener *****");
+        // Storing the data-topic property value from the button
+        currentTopic = $(this).attr("data-topic");
+        topicSpacer = encodeURIComponent(currentTopic);
+        $('#warn').empty();
+        $("#search-term").val('');
+        movieRequestAjax();
+        console.log("now call GIPHYAPI");
+    });
+
+    // Click handler for input box
+    $("#search-term").on("click", function () {
+        $("#search-term").val('');
+    });
+
+    //////////////////////////////////////////////
+    // Ajax call to OMDBAPI using parameter from #tags listener
+    var movieRequestAjax = function () {
+        console.log("---- hi movieRequestAjax ----");
+        // Constructing a queryURL using the topic name
+        var APIKEY = "c7c89c17";
+        var queryURL = "http://www.omdbapi.com/?t=" +
+            topicSpacer + "&apikey=" + APIKEY + "&plot=full" + "&limit=1";
         console.log("queryURL: ", queryURL);
         // Performing an AJAX request with the queryURL
         $.ajax({
@@ -49,55 +125,41 @@ $(document).ready(function () {
         })
             // After data comes back from the request
             .then(function (response) {
-                console.log("---- hi movie ajax promise ----");
                 // storing the data from the AJAX request in the results variable
                 var results = response;
-                if (x = undefined) {
-                    console.log("HEY!!! UNDEFINED FROM OMDB");
-                    return false;
-                } else {
-                    console.log(results);
-                    displayMovie(results);
-                };
+                console.log("movieRequestAjax results:", results);
+                displayMovie(results);
             });
     };
 
+
     // Function to add OMDBAPI info to the page
     var displayMovie = function (x) {
+        // Movie holds the AJAX results passed in from the OMDB API call
         var movie = x;
-        console.log("---- hi displayMovie ----");
-        console.log("movie: ", movie);
-        var titleDiv = $('<div class="movie-title">');
-        titleDiv.html('<h2>Movie Title:' + movie.Search[0].Title + '</h2>' + '<h2>Year: ' + movie.Search[0].Year + '</h2>');
-        $('#gifs-appear-here').prepend(titleDiv);
-
+        $('#movies-view').empty();
+        tempDiv = $('<div class="movie-title clearfix">');
+        tempDiv.html('<h2>' + movie.Title + '</h2>' + '<br><h3>Year: ' + movie.Year + '</h3><br>' + '<h3>Rating: ' + movie.Rated + '</h3><br>' + '<p><strong>' + 'Plot: ' + '</strong>' + movie.Plot + '</p>');
+        var img = $('<img />');
+        img.attr("src", movie.Poster);
+        tempDiv.prepend(img);
+        $('#gifs-appear-here').prepend(tempDiv);
+        gifRequest();
     };
 
 
     //////////////////////////////////////////////
 
 
-
-
-
-
-
+    /////////////////////////////////////////////
     // Ajax call to GiphyAPI using parameter from #tags listener
-    var gifRequest = function (topic) {
+    var gifRequest = function () {
         console.log("---- hi gifRequest ----");
-        var x = 10;
-        console.log("currentTopicTen: ", currentTopicTen);
-        // Has user already received a set of 10 results?
-        if (currentTopicTen === 0) {
-            x = 10;
-        } else {
-            x = currentTopicTen * 10;
-        };
 
         // Constructing a queryURL using the topic name
         var APIKEY = "DPBvGpuy5v0lsWlSAd51dsjMvJ6rjWcP";
         var queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
-            topic + "&api_key=" + APIKEY + "&limit=10" + "&offset=" + x;
+            topicSpacer + "&api_key=" + APIKEY + "&limit=10";
         // Performing an AJAX request with the queryURL
         $.ajax({
             url: queryURL,
@@ -105,12 +167,7 @@ $(document).ready(function () {
         })
             // After data comes back from the request
             .then(function (response) {
-                console.log(queryURL);
-                console.log(response);
-                // storing the data from the AJAX request in the results variable
-                var results = response.data;
-                displayGifs(results);
-                currentTopicTen++;
+                displayGifs(response.data);
             });
     };
 
@@ -122,14 +179,13 @@ $(document).ready(function () {
         for (var i = 0; i < resultsList.length; i++) {
             // Creating and storing a div tag
             var topicDiv = $("<div>");
-
+            wrapDiv = $('<div class="wrap">');
             // Creating a paragraph tag with the result item's rating
             var rating = $("<p>").text("Rating: " + resultsList[i].rating.toUpperCase());
             rating.attr("class", "meta");
             // Creating a paragraph tag with the result item's title
             var title = $("<p>").text("Title: " + resultsList[i].title);
             title.attr("class", "meta");
-
             // Creating and storing an image tag
             var topicImage = $("<img>");
             // Setting the src attribute of the image to the fixed height still property
@@ -137,51 +193,18 @@ $(document).ready(function () {
             topicImage.attr("data-state", "still");
             topicImage.attr("data-still", resultsList[i].images.fixed_height_still.url);
             topicImage.attr("data-animate", resultsList[i].images.fixed_height.url);
-            // Setting the 
-            // Adding a class to the image
             topicImage.attr("class", "clicky");
             // Appending the paragraph and image tag to the topicDiv
             topicDiv.attr("class", "topic-image");
             topicDiv.append(topicImage);
             topicDiv.append(rating);
             topicDiv.append(title);
-            console.log("topicDiv: ", topicDiv);
-            // FIX THIS HERE
-            // Prependng the topicDiv to the HTML page in the "#gifs-appear-here" div
-            $("#gifs-appear-here").prepend(topicDiv);
+            wrapDiv.html(topicDiv);
+            $("#gifs-appear-here").prepend(wrapDiv);
         }
+        $("#gifs-appear-here").prepend(tempDiv);
     };
-
-    // Function for button to add 10 Gifs to the current topic
-    var showAddTenButton = function () {
-        console.log("---- hi addTenGifs ----");
-        var controlsDiv = $("#controls");
-        controlsDiv.empty();
-        var addTenButton = $("<button>");
-        addTenButton.attr("class", "form-control");
-        addTenButton.attr("id", "add");
-        addTenButton.text("Add 10 new " + currentTopic + " Gifs!")
-        controlsDiv.append(addTenButton);
-    };
-
-
-
-    // Click handler for add 10 button
-    $("#controls").on("click", "button", function () {
-        console.log("---- hi #controls listener ----");
-        gifRequest(currentTopic);
-    });
-
-    // Click handler for buttons inside #tags div
-    $("#tags").on("click", "button", function () {
-        console.log("---- hi #tags listener ----");
-        // Storing the data-topic property value from the button
-        currentTopic = $(this).attr("data-topic");
-        $('#movies-view').empty();
-        showAddTenButton();
-        gifRequest(currentTopic);
-        actorRequest(currentTopic);
-    });
+    ///////////////////////////////////////////////////////
 
 
     // Click handler to toggle between still image and animated GIFs
@@ -199,20 +222,7 @@ $(document).ready(function () {
         }
     });
 
-    // Click handler for the Search Button
-    $("#run-search").on("click", function (event) {
-        console.log("---- hi run search listener ----");
-        // Prevents the page from reloading on form submit.
-        event.preventDefault();
-        // Grab text the user typed into the search input
-        var input = $("#search-term").val().trim();
-        // If the input is not empty, add the topic to the array
-        if (input) {
-            topicsArray.push(input);
-            topicList();
-            $('#searchbox').find('input:text').val('');
-        };
-    });
+
 
     // Initialize function
     var init = function () {
@@ -222,5 +232,6 @@ $(document).ready(function () {
 
     // Start the 'app'
     init();
+
 
 });
