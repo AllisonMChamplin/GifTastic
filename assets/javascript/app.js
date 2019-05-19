@@ -74,11 +74,14 @@ $(document).ready(function () {
         for (var i = 0; i < resultsList.length; i++) {
             // Creating and storing a div tag
             var topicDiv = $("<div>");
+
             // Creating a paragraph tag with the result item's rating
             var rating = $("<p>").text("Rating: " + resultsList[i].rating.toUpperCase());
             rating.attr("class", "meta");
-            var title = $("<p>").text("title: " + resultsList[i].title);
+            // Creating a paragraph tag with the result item's title
+            var title = $("<p>").text("Title: " + resultsList[i].title);
             title.attr("class", "meta");
+
             // Creating and storing an image tag
             var topicImage = $("<img>");
             // Setting the src attribute of the image to the fixed height still property
@@ -113,7 +116,7 @@ $(document).ready(function () {
 
     // Show current topic div
     var showTopic = function () {
-        console.log("---- hi showTopic ----")
+        console.log("---- hi showTopic ----");
         var showDiv = $('#show');
         showDiv.html(currentTopic);
     };
@@ -160,6 +163,7 @@ $(document).ready(function () {
         if (input) {
             topicsArray.push(input);
             topicList();
+            $('#searchbox').find('input:text').val(''); 
         };
     });
 

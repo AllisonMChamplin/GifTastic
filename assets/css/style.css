@@ -53,13 +53,19 @@ h1 {
 }
 
 .page-header {
-    background:#3f3d64;
-    color: #fff;
-
+/* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#cb60b3+0,ad1283+50,de47ac+100;Pink+3D */
+background: #cb60b3; /* Old browsers */
+background: -moz-linear-gradient(top,  #cb60b3 0%, #ad1283 50%, #de47ac 100%); /* FF3.6-15 */
+background: -webkit-linear-gradient(top,  #cb60b3 0%,#ad1283 50%,#de47ac 100%); /* Chrome10-25,Safari5.1-6 */
+background: linear-gradient(to bottom,  #cb60b3 0%,#ad1283 50%,#de47ac 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cb60b3', endColorstr='#de47ac',GradientType=0 ); /* IE6-9 */
+color: #fff;
 }
 
 h1 {
     padding: 20px 0;
+    width: 185px;
+    display: inline-block;
 }
 
 .clicky {
@@ -92,11 +98,12 @@ label {
     float: left;
     text-align: center;
     margin-bottom: 20px;
+    margin-top: 40px;
     height: 226px;
 }
 
 .meta {
-    margin: 12px 0;
+    margin: 4px 0;
 }
 
 #tags {
@@ -112,4 +119,11 @@ form {
     background: #fff;
     padding: 10px;
     border-radius: 10px;
+}
+
+#show {
+    width: 300px;
+    float: right;
+    text-align: right;
+    margin: 34px 0 0;
 }
