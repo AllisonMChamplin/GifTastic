@@ -1,7 +1,7 @@
 $(document).ready(function () {
 
-    var topicsArray = ["Rainbows", "Fairies", "Unicorns", "Sparkles", "Princesses", "Pink kittens", "Ponies", "Twilight sparkle", "Pinkie Pie", "Rainbow Dash", "Fluttershy"];
-    var colors = ["c8bddd", "a68fc3", "a94698", "7754a4", "652d92", "8b2475", "c41a7b", "ef1468", "e46075", "ed6967", "c82262"];
+    var topicsArray = ["Audrey Hepburn", "Lauren Bacall", "John Wayne", "Greta Garbo", "Judy Garland", "Ingrid Bergman", "Peter O'Toole", "Katherine Hepburn", "Jean Harlow", "Grace Kelly", "Elizabeth Taylor"];
+    var colors = ["656565", "646b73", "928f8a"];
     var currentTopic = "";
     var currentTopicTen = 1;
 
@@ -58,7 +58,6 @@ $(document).ready(function () {
             .then(function (response) {
                 console.log(queryURL);
                 console.log(response);
-
                 // storing the data from the AJAX request in the results variable
                 var results = response.data;
                 displayGifs(results);

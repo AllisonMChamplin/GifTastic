@@ -1,6 +1,6 @@
 body {
-    Font-Family: 'Open Sans', Sans-Serif;
-    Font-Size: 15px;
+    font-family: 'Roboto', sans-serif;
+    font-Size: 15px;
 }
 
 div {
@@ -8,63 +8,72 @@ div {
 }
 
 h1, h2, h3, h4, h5 {
-    Font-Family: 'Raleway', Sans-Serif;
+    font-family: 'Yesteryear', cursive;
 }
 
 h1 {
-    Font-Size: 44px;
+    Font-Size: 50px;
 }
 
 .tag {    
     display: inline-block;
-    margin: 5px;
-    padding: 10px 16px;
+    margin: 2px;
+    padding: 7px 10px;
     border: 1px solid white;
-    border-radius: 9px;
+    border-radius: 4px;
     color:#fff;
-    font-weight: bolder;
-    -webkit-box-shadow: 0px 0px 6px -1px rgba(122,122,122,1);
-    -moz-box-shadow: 0px 0px 6px -1px rgba(122,122,122,1);
-    box-shadow: 0px 0px 6px -1px rgba(122,122,122,1);
+    font-weight: normal;
+    -webkit-box-shadow: 0px 0px 2px -1px rgba(122,122,122,1);
+    -moz-box-shadow: 0px 0px 2px -1px rgba(122,122,122,1);
+    box-shadow: 0px 0px 2px -1px rgba(122,122,122,1);
+    text-transform: uppercase;
+    font-size: 14px;
+}
+
+.tag:hover {
+    background:#3f3d64 !important;
 }
 
 .topicDiv {
     display: inline-block;
     float: left;
     margin-right: 40px;
-    border: 1px solid red;
 }
 
 #run-search {
     border: 1px solid white;
-    border-radius: 5px;
+    border-radius: 3px;
     color:#fff;
     font-weight: bolder;
+    background:#3f3d64;
+    padding: 5px 12px;
 }
 
-.btn-grad {background-image: linear-gradient(to right, #642B73 0%, #C6426E 51%, #642B73 100%)}
-.btn-grad:hover { background-position: right center; }
+.btn-grad {
+    background: #666;
+}
 
-#run-search {
-    border: 1px solid white;
-    -webkit-box-shadow: 0px 0px 6px -1px rgba(122,122,122,1);
-    -moz-box-shadow: 0px 0px 6px -1px rgba(122,122,122,1);
-    box-shadow: 0px 0px 6px -1px rgba(122,122,122,1);
+.btn-grad:hover {
+    background: #3f3d64; 
+    -webkit-transition: background 1s; /* Safari */
+    transition: background 1s;
 }
 
 .page-header {
-/* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#cb60b3+0,ad1283+50,de47ac+100;Pink+3D */
-background: #cb60b3; /* Old browsers */
-background: -moz-linear-gradient(top,  #cb60b3 0%, #ad1283 50%, #de47ac 100%); /* FF3.6-15 */
-background: -webkit-linear-gradient(top,  #cb60b3 0%,#ad1283 50%,#de47ac 100%); /* Chrome10-25,Safari5.1-6 */
-background: linear-gradient(to bottom,  #cb60b3 0%,#ad1283 50%,#de47ac 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cb60b3', endColorstr='#de47ac',GradientType=0 ); /* IE6-9 */
-color: #fff;
+    background-color:#666;
+    background-image: url("../../assets/images/blk-dot.jpg");
+    background-repeat: repeat-x;
+    background-position: top left;
+    color: #fff;
+    padding-top: 12px;
+    margin-bottom: 4px;
+    border-bottom: 8px solid #ccc;
+    border-top: 3px solid #333;
 }
 
 h1 {
-    padding: 20px 0;
-    width: 185px;
+    padding: 23px 0 16px 0;
+    width: 358px;
     display: inline-block;
 }
 
@@ -76,15 +85,9 @@ h1 {
     box-shadow: 0px 0px 6px -1px rgba(122,122,122,1);
 }
 
-.tag:hover {
-    background:#fff !important;
-    color:#3f3d64;
-}
 
 #search {
-    background: #ccc;
-    border-radius: 10px;
-    padding: 20px;
+    text-align: right;
 }
 
 label {
@@ -108,7 +111,8 @@ label {
 
 #tags {
     border-bottom: 1px solid #ccc;
-    margin-bottom: 30px;
+    margin-bottom: 7px;
+    padding-bottom: 4px;
 }
 
 #controls {
@@ -116,9 +120,9 @@ label {
 }
 
 form {
-    background: #fff;
+    /* background: #fff;
     padding: 10px;
-    border-radius: 10px;
+    border-radius: 10px; */
 }
 
 #show {
@@ -126,4 +130,10 @@ form {
     float: right;
     text-align: right;
     margin: 34px 0 0;
+}
+
+#add {
+    background: #3f3d64;
+    color: #fff;
+    font-weight: bold;
 }
