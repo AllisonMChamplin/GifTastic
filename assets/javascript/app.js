@@ -1,6 +1,6 @@
 $(document).ready(function () {
 
-    var topicsArray = ["Audrey Hepburn", "Lauren Bacall", "John Wayne", "Greta Garbo", "Judy Garland", "Ingrid Bergman", "Peter O'Toole", "Katherine Hepburn", "Jean Harlow", "Grace Kelly", "Elizabeth Taylor"];
+    var topicsArray = ["Breakfast at Tiffany's", "Some Like it Hot", "Casablanca", "Gone With the Wind", "Sabrina", "Psycho", "Cool Hand Luke"];
     var colors = ["656565", "646b73", "928f8a"];
     var currentTopic = "";
     var currentTopicTen = 1;
@@ -32,6 +32,55 @@ $(document).ready(function () {
         var c = colors[Math.floor(Math.random() * colors.length)];
         return c;
     };
+
+    //////////////////////////////////////////////
+    // Ajax call to OMDBAPI using parameter from #tags listener
+    var actorRequest = function (topic) {
+        console.log("---- hi actorRequest ----");
+        // Constructing a queryURL using the topic name
+        var APIKEY = "c7c89c17";
+        var queryURL = "http://www.omdbapi.com/?s=" +
+            topic + "&apikey=" + APIKEY + "&limit=1";
+        console.log("queryURL: ", queryURL);
+        // Performing an AJAX request with the queryURL
+        $.ajax({
+            url: queryURL,
+            method: "GET"
+        })
+            // After data comes back from the request
+            .then(function (response) {
+                console.log("---- hi movie ajax promise ----");
+                // storing the data from the AJAX request in the results variable
+                var results = response;
+                if (x = undefined) {
+                    console.log("HEY!!! UNDEFINED FROM OMDB");
+                    return false;
+                } else {
+                    console.log(results);
+                    displayMovie(results);
+                };
+            });
+    };
+
+    // Function to add OMDBAPI info to the page
+    var displayMovie = function (x) {
+        var movie = x;
+        console.log("---- hi displayMovie ----");
+        console.log("movie: ", movie);
+        var titleDiv = $('<div class="movie-title">');
+        titleDiv.html('<h2>Movie Title:' + movie.Search[0].Title + '</h2>' + '<h2>Year: ' + movie.Search[0].Year + '</h2>');
+        $('#gifs-appear-here').prepend(titleDiv);
+
+    };
+
+
+    //////////////////////////////////////////////
+
+
+
+
+
+
 
     // Ajax call to GiphyAPI using parameter from #tags listener
     var gifRequest = function (topic) {
@@ -65,7 +114,7 @@ $(document).ready(function () {
             });
     };
 
-    // Function to add ajax array to the page
+    // Function to add GIPHYAPI ajax results array to the page
     var displayGifs = function (x) {
         console.log("---- hi displayGifs ----");
         var resultsList = x;
@@ -96,6 +145,8 @@ $(document).ready(function () {
             topicDiv.append(topicImage);
             topicDiv.append(rating);
             topicDiv.append(title);
+            console.log("topicDiv: ", topicDiv);
+            // FIX THIS HERE
             // Prependng the topicDiv to the HTML page in the "#gifs-appear-here" div
             $("#gifs-appear-here").prepend(topicDiv);
         }
@@ -113,12 +164,7 @@ $(document).ready(function () {
         controlsDiv.append(addTenButton);
     };
 
-    // Show current topic div
-    var showTopic = function () {
-        console.log("---- hi showTopic ----");
-        var showDiv = $('#show');
-        showDiv.html(currentTopic);
-    };
+
 
     // Click handler for add 10 button
     $("#controls").on("click", "button", function () {
@@ -131,10 +177,12 @@ $(document).ready(function () {
         console.log("---- hi #tags listener ----");
         // Storing the data-topic property value from the button
         currentTopic = $(this).attr("data-topic");
-        showTopic(currentTopic);
+        $('#movies-view').empty();
         showAddTenButton();
         gifRequest(currentTopic);
+        actorRequest(currentTopic);
     });
+
 
     // Click handler to toggle between still image and animated GIFs
     $('body').on('click', 'img', function () {
@@ -162,7 +210,7 @@ $(document).ready(function () {
         if (input) {
             topicsArray.push(input);
             topicList();
-            $('#searchbox').find('input:text').val(''); 
+            $('#searchbox').find('input:text').val('');
         };
     });
 

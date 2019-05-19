@@ -1,5 +1,5 @@
 body {
-    font-family: 'Roboto', sans-serif;
+    font-family: Georgia, 'Times New Roman', Times, serif;
     font-Size: 15px;
 }
 
@@ -8,11 +8,13 @@ div {
 }
 
 h1, h2, h3, h4, h5 {
-    font-family: 'Yesteryear', cursive;
+    /* font-family: 'Yesteryear', cursive; */
 }
 
-h1 {
+h1#title {
     Font-Size: 50px;
+    padding: 0 0 16px 0;
+    display: inline-block;
 }
 
 .tag {    
@@ -60,21 +62,14 @@ h1 {
 }
 
 .page-header {
-    background-color:#666;
-    background-image: url("../../assets/images/blk-dot.jpg");
+    background-color:#3f3d64;
     background-repeat: repeat-x;
     background-position: top left;
     color: #fff;
     padding-top: 12px;
     margin-bottom: 4px;
     border-bottom: 8px solid #ccc;
-    border-top: 3px solid #333;
-}
-
-h1 {
-    padding: 23px 0 16px 0;
-    width: 358px;
-    display: inline-block;
+    border-top: 14px solid #333;
 }
 
 .clicky {
@@ -136,4 +131,20 @@ form {
     background: #3f3d64;
     color: #fff;
     font-weight: bold;
+}
+
+.jumbotron {
+    background: #3f3d64;
+}
+
+#gifs-appear-here h2 {}
+
+.movie-title {
+    background: rgb(235, 235, 235);
+    border: 1px solid #ccc;
+    display: block;
+    clear: both;
+    padding: 20px;
+    margin: 40px 20px 0;
+    border-radius: 4px;
 }
