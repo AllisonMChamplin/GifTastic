@@ -226,3 +226,11 @@ p {
     background: #fff;
     border-bottom: 3px solid #666;
 }
+
+#title a, #title a:visited {
+    color:#fff;
+}
+
+#title a:hover {
+    color: #fff;
+}
