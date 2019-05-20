@@ -40,7 +40,7 @@ $(document).ready(function () {
     // matcherAjax checks if the user's topic has a match in OMDB API
     var matcherAjax = function () {
         var APIKEY = "c7c89c17";
-        var queryURL = "http://www.omdbapi.com/?t=" +
+        var queryURL = "https://www.omdbapi.com/?t=" +
             tempTopic + "&apikey=" + APIKEY + "&limit=1";
         console.log("queryURL: ", queryURL);
         $.ajax({
@@ -109,7 +109,7 @@ $(document).ready(function () {
         console.log("---- hi movieRequestAjax ----");
         // Constructing a queryURL using the topic name
         var APIKEY = "c7c89c17";
-        var queryURL = "http://www.omdbapi.com/?t=" +
+        var queryURL = "https://www.omdbapi.com/?t=" +
             topicSpacer + "&apikey=" + APIKEY + "&plot=full" + "&limit=1";
         console.log("queryURL: ", queryURL);
         // Performing an AJAX request with the queryURL
