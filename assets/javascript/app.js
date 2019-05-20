@@ -3,18 +3,17 @@ $(document).ready(function () {
     var topicsArray = ["Breakfast at Tiffany's", "Some Like it Hot", "Casablanca", "Gone With the Wind", "Sabrina", "Psycho", "Cool Hand Luke"];
     var colors = ["656565", "646b73", "928f8a"];
     var currentTopic = "";
-    var currentTopicTen = 1;
     var topicSpacer = "";
     var tempTopic = "";
-    var tempTopicSpacer = "";
+    var tempResponse = "";
     var tempDiv = "";
-    var wrapDiv = "";
 
     // This function creates a button for each item in topicsArray and appends them to #tags
     var topicList = function () {
         console.log("---- hi topicList ----");
         $('#tags').empty();
         // Create a button for each topic in topicsArray
+        $('#tags').append("Tags: ");
         for (var i = 0; i < topicsArray.length; i++) {
             // Variable to hold the new button
             var tagDiv = $("<button>");
@@ -38,38 +37,11 @@ $(document).ready(function () {
         return c;
     };
 
-
-
-
-    // Click handler for the Search Button
-    $("#run-search").on("click", function (event) {
-        console.log("---- hi search event ----");
-        // Prevents the page from reloading on form submit.
-        event.preventDefault();
-        $('#warn').empty();
-        // Grab text the user typed into the search input
-        tempTopic = $("#search-term").val().trim();
-        // If the tempTopic is not empty, call matcherAjax to see if it's in the OMDBAPI database.
-        if (tempTopic) {
-            tempTopicSpacer = encodeURIComponent(tempTopic);
-            if (matcherAjax(tempTopicSpacer) == true) {
-                topicsArray.push(tempTopic);
-                topicList();
-                $('#searchbox').find('input:text').val('');
-                currentTopic == tempTopic;
-            } else {
-                return false;
-            };
-        } else {
-            console.log("blank input search entered");
-        };
-    });
-
     // matcherAjax checks if the user's topic has a match in OMDB API
-    var matcherAjax = function (x) {
+    var matcherAjax = function () {
         var APIKEY = "c7c89c17";
-        var queryURL = "http://www.omdbapi.com/?s=" +
-            x + "&apikey=" + APIKEY + "&limit=1";
+        var queryURL = "http://www.omdbapi.com/?t=" +
+            tempTopic + "&apikey=" + APIKEY + "&limit=1";
         console.log("queryURL: ", queryURL);
         $.ajax({
             url: queryURL,
@@ -77,37 +49,59 @@ $(document).ready(function () {
         })
             .then(function (response) {
                 console.log("response", response);
-                console.log(response.Response);
-                if (response.Response == "False") {
-                    console.log("Matcher: its false");
-                    $('#warn').html(response.Error + ' Try again!');
-                    return false;
-                } else {
-                    console.log("Matcher: its true");
-                    var q = decodeURIComponent(topicSpacer);
-                    console.log("q: ", q);
-                    return q;
-                }
+                tempResponse = response;
+                processMatcher();
             });
     };
+
+    // Click handler for the Search Button
+    $("#run-search").on("click", function (event) {
+        event.preventDefault();
+        $('#warn').empty();
+        tempTopic = $("#search-term").val().trim();
+        tempTopicSpacer = encodeURIComponent(tempTopic);
+        matcherAjax(tempTopicSpacer);
+        $('#search-term').val('');
+    });
+
+    // Add title associated with user input to the topics
+    var addTopic = function () {
+        var title = tempResponse.Title;
+        console.log("title ", title);
+        topicsArray.push(title);
+        topicList();
+    };
+
+    // processMatcher determines if user input has a match in OMDB API
+    var processMatcher = function () {
+        if (tempResponse.Response == "True") {
+            console.log("Execute true path");
+            addTopic();
+        } else if (tempResponse.Response == "False") {
+            console.log("Execute false path");
+            $('#warn').html(tempResponse.Error + ' Try again!');
+            return false;
+        }
+    };
+
+    $("#search-term").on("click", function () {
+        $(this).val('');
+        $('#warn').empty();
+    })
+
+
 
 
     // Click handler for buttons inside #tags div
     $("#tags").on("click", "button", function () {
-        console.log("***** CLICK! hi #tags listener *****");
-        // Storing the data-topic property value from the button
         currentTopic = $(this).attr("data-topic");
         topicSpacer = encodeURIComponent(currentTopic);
         $('#warn').empty();
-        $("#search-term").val('');
+        $("#id").val('');
         movieRequestAjax();
         console.log("now call GIPHYAPI");
     });
 
-    // Click handler for input box
-    $("#search-term").on("click", function () {
-        $("#search-term").val('');
-    });
 
     //////////////////////////////////////////////
     // Ajax call to OMDBAPI using parameter from #tags listener
@@ -135,15 +129,13 @@ $(document).ready(function () {
 
     // Function to add OMDBAPI info to the page
     var displayMovie = function (x) {
-        // Movie holds the AJAX results passed in from the OMDB API call
-        var movie = x;
         $('#movies-view').empty();
         tempDiv = $('<div class="movie-title clearfix">');
-        tempDiv.html('<h2>' + movie.Title + '</h2>' + '<br><h3>Year: ' + movie.Year + '</h3><br>' + '<h3>Rating: ' + movie.Rated + '</h3><br>' + '<p><strong>' + 'Plot: ' + '</strong>' + movie.Plot + '</p>');
+        tempDiv.html('<h2>' + x.Title + '</h2>' + '<br><h3>Year: ' + x.Year + '</h3><br>' + '<h3>Rating: ' + x.Rated + '</h3><br>' + '<p><strong>' + 'Plot: ' + '</strong>' + x.Plot + '</p>');
         var img = $('<img />');
-        img.attr("src", movie.Poster);
+        img.attr("src", x.Poster);
         tempDiv.prepend(img);
-        $('#gifs-appear-here').prepend(tempDiv);
+        // $('#gifs-appear-here').prepend(tempDiv);
         gifRequest();
     };
 
@@ -154,18 +146,13 @@ $(document).ready(function () {
     /////////////////////////////////////////////
     // Ajax call to GiphyAPI using parameter from #tags listener
     var gifRequest = function () {
-        console.log("---- hi gifRequest ----");
-
-        // Constructing a queryURL using the topic name
         var APIKEY = "DPBvGpuy5v0lsWlSAd51dsjMvJ6rjWcP";
         var queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
             topicSpacer + "&api_key=" + APIKEY + "&limit=10";
-        // Performing an AJAX request with the queryURL
         $.ajax({
             url: queryURL,
             method: "GET"
         })
-            // After data comes back from the request
             .then(function (response) {
                 displayGifs(response.data);
             });
@@ -173,36 +160,30 @@ $(document).ready(function () {
 
     // Function to add GIPHYAPI ajax results array to the page
     var displayGifs = function (x) {
-        console.log("---- hi displayGifs ----");
         var resultsList = x;
-        // Looping through each result item
+        var wrapDiv = $("<div class='wrap clearfix'>");
         for (var i = 0; i < resultsList.length; i++) {
-            // Creating and storing a div tag
-            var topicDiv = $("<div>");
-            wrapDiv = $('<div class="wrap">');
+            var gifDiv = $("<div class='topic'>");
             // Creating a paragraph tag with the result item's rating
             var rating = $("<p>").text("Rating: " + resultsList[i].rating.toUpperCase());
             rating.attr("class", "meta");
-            // Creating a paragraph tag with the result item's title
-            var title = $("<p>").text("Title: " + resultsList[i].title);
-            title.attr("class", "meta");
-            // Creating and storing an image tag
-            var topicImage = $("<img>");
+            var topicImage = $("<img />");
             // Setting the src attribute of the image to the fixed height still property
             topicImage.attr("src", resultsList[i].images.fixed_height_still.url);
             topicImage.attr("data-state", "still");
             topicImage.attr("data-still", resultsList[i].images.fixed_height_still.url);
             topicImage.attr("data-animate", resultsList[i].images.fixed_height.url);
             topicImage.attr("class", "clicky");
-            // Appending the paragraph and image tag to the topicDiv
-            topicDiv.attr("class", "topic-image");
-            topicDiv.append(topicImage);
-            topicDiv.append(rating);
-            topicDiv.append(title);
-            wrapDiv.html(topicDiv);
-            $("#gifs-appear-here").prepend(wrapDiv);
+            // Appending the paragraph and image tag to the gifDiv
+            gifDiv.attr("class", "topic-image");
+            gifDiv.append(topicImage);
+            gifDiv.append(rating);
+            // gifDiv.append(title);
+            wrapDiv.append(gifDiv);
         }
-        $("#gifs-appear-here").prepend(tempDiv);
+        wrapDiv.prepend(tempDiv);
+        $("#gifs-appear-here").prepend(wrapDiv);
+        
     };
     ///////////////////////////////////////////////////////
 
@@ -232,6 +213,5 @@ $(document).ready(function () {
 
     // Start the 'app'
     init();
-
 
 });
